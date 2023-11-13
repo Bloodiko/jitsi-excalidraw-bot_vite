@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useRef } from "react";
-import { ExcalidrawApp } from "@jitsi/excalidraw";
+import { ExcalidrawApp, serializeAsJSON, restore } from "@jitsi/excalidraw";
+
+(window as any).serializeAsJSON = serializeAsJSON;
+(window as any).restore = restore;
 
 const collabDetails = {
-  roomId: "integratedchairmencalmforward",
-  roomKey: "o-MJPYM5g1-mXI_-WnUNSw",
+  roomId: "colouredspicesexperiencelong",
+  roomKey: "KCkByxCRfqTK8MY7-BSYkg",
 };
+
+(window as any).collabDetails = collabDetails;
 
 // final url wss://excalidraw-backend.jitsi.net/socket.io/?room=186e926f3fb2349e466f2b20ca82f115&EIO=3&transport=websocket
 
@@ -21,6 +26,7 @@ const Whiteboard = (): JSX.Element => {
       return;
     }
     excalidrawAPIRef.current = excalidrawAPI;
+    (window as any).excalidrawAPI = excalidrawAPI;
   }, []);
 
   const getCollabAPI = useCallback((collabAPI: any) => {
@@ -28,12 +34,25 @@ const Whiteboard = (): JSX.Element => {
       return;
     }
     collabAPIRef.current = collabAPI;
+    (window as any).collabAPI = collabAPI;
     collabAPIRef.current.setUsername("Whiteboard Bot");
   }, []);
 
   return (
-    <div>
-      <div className="excalidraw-wrapper">
+    <div
+      className="whiteboard"
+      style={{
+        height: "80vh",
+        width: "80vw",
+        display: "block",
+      }}
+    >
+      <div
+        style={{
+          height: "100%",
+        }}
+        className="excalidraw-wrapper"
+      >
         {
           /*
            * Excalidraw renders a few lvl 2 headings. This is
@@ -42,7 +61,9 @@ const Whiteboard = (): JSX.Element => {
            * sure to mark the Excalidraw context with a lvl 1
            * heading before showing the whiteboard.
            */
-          <span className="sr-only" role="heading"></span>
+          <span aria-level={1} className="sr-only" role="heading">
+            Whiteboard
+          </span>
         }
         <ExcalidrawApp
           collabDetails={collabDetails}
