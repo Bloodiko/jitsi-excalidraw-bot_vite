@@ -1,10 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Whiteboard from "./whiteboard/Whiteboard";
 
+//import { Excalidraw } from "@jitsi/excalidraw";
+
+import type { CollabDetails } from "../types/types";
+import { useState } from "react";
+
 function App() {
+  const [collabDetails, setCollabDetails] = useState<CollabDetails | undefined>(
+    undefined
+  );
+
+  (window as any).setCollabDetails = setCollabDetails;
+
   return (
     <>
-      <h1>Whiteboard App</h1>
-      <Whiteboard></Whiteboard>
+      {collabDetails && <Whiteboard collabDetails={collabDetails}></Whiteboard>}
+      {!collabDetails && <div>!Waiting for collab details</div>}
     </>
   );
 }

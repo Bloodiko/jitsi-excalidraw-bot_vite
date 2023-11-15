@@ -1,22 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useRef } from "react";
-import { ExcalidrawApp, serializeAsJSON, restore } from "@jitsi/excalidraw";
+import {
+  ExcalidrawApp,
+  serializeAsJSON,
+  restore,
+  restoreElements,
+} from "@jitsi/excalidraw";
 
-(window as any).serializeAsJSON = serializeAsJSON;
-(window as any).restore = restore;
+import type { WhiteboardProps } from "../../types/types";
 
-const collabDetails = {
-  roomId: "colouredspicesexperiencelong",
-  roomKey: "KCkByxCRfqTK8MY7-BSYkg",
+(window as any).excalidrawUtils = {
+  restoreElements,
+  restore,
+  serializeAsJSON,
 };
-
-(window as any).collabDetails = collabDetails;
 
 // final url wss://excalidraw-backend.jitsi.net/socket.io/?room=186e926f3fb2349e466f2b20ca82f115&EIO=3&transport=websocket
 
-const collabServerBaseUrl = "https://excalidraw-backend.jitsi.net";
+const collabServerBaseUrl = "https://excalidraw-backend.ffmuc.net";
 
-const Whiteboard = (): JSX.Element => {
+const Whiteboard = ({ collabDetails }: WhiteboardProps): JSX.Element => {
   const excalidrawRef = useRef<any>(null);
   const excalidrawAPIRef = useRef<any>(null);
   const collabAPIRef = useRef<any>(null);
@@ -26,7 +29,29 @@ const Whiteboard = (): JSX.Element => {
       return;
     }
     excalidrawAPIRef.current = excalidrawAPI;
-    (window as any).excalidrawAPI = excalidrawAPI;
+    (window as any).excalidrawUtils.excalidrawAPI = excalidrawAPI;
+
+    // function to export as json
+    function exportToJSON() {
+      const elements = excalidrawAPI.getSceneElementsIncludingDeleted() || [];
+      const json = JSON.stringify(elements);
+      return json;
+    }
+
+    // function to import from json // TODO: this is not working yet
+    function importFromJSON(json: string) {
+      const elements = JSON.parse(json);
+      excalidrawAPI.updateScene({ elements });
+
+      // get all scene Elements with deleted
+      const allElements = excalidrawAPI.getSceneElementsIncludingDeleted();
+
+      // publish all elements to the collab server
+      collabAPIRef.current.syncElements(allElements);
+    }
+
+    (window as any).excalidrawUtils.exportToJSON = exportToJSON;
+    (window as any).excalidrawUtils.importFromJSON = importFromJSON;
   }, []);
 
   const getCollabAPI = useCallback((collabAPI: any) => {
@@ -34,7 +59,7 @@ const Whiteboard = (): JSX.Element => {
       return;
     }
     collabAPIRef.current = collabAPI;
-    (window as any).collabAPI = collabAPI;
+    (window as any).excalidrawUtils.collabAPI = collabAPI;
     collabAPIRef.current.setUsername("Whiteboard Bot");
   }, []);
 
@@ -42,8 +67,8 @@ const Whiteboard = (): JSX.Element => {
     <div
       className="whiteboard"
       style={{
-        height: "80vh",
-        width: "80vw",
+        height: "95vh",
+        width: "95vw",
         display: "block",
       }}
     >
