@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 public/libs/*
+
+# compare folder, only locally relevant for experiments
+compare/*

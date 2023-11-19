@@ -5,6 +5,8 @@ import {
   serializeAsJSON,
   restore,
   restoreElements,
+  generateCollaborationLinkData,
+  //convertToExcalidrawElements, // not implemented in version 0.15 of @jitsi/excalidraw as its too far behind main.
 } from "@jitsi/excalidraw";
 
 import type { WhiteboardProps } from "../../types/types";
@@ -13,11 +15,13 @@ import type { WhiteboardProps } from "../../types/types";
   restoreElements,
   restore,
   serializeAsJSON,
+  generateCollaborationLinkData,
 };
 
 // final url wss://excalidraw-backend.jitsi.net/socket.io/?room=186e926f3fb2349e466f2b20ca82f115&EIO=3&transport=websocket
 
-const collabServerBaseUrl = "https://excalidraw-backend.ffmuc.net";
+//const collabServerBaseUrl = "http://localhost:3002"; // local development testings
+const collabServerBaseUrl = "https://excalidraw-backend.ffmuc.net"; // experimenting with a live public jitsi server
 
 const Whiteboard = ({ collabDetails }: WhiteboardProps): JSX.Element => {
   const excalidrawRef = useRef<any>(null);

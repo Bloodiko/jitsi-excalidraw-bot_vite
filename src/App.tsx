@@ -6,8 +6,14 @@ import Whiteboard from "./whiteboard/Whiteboard";
 import type { CollabDetails } from "../types/types";
 import { useState } from "react";
 
+// const fixedCollabDetails: CollabDetails = {
+//   roomId: "testroom1asd",
+//   roomKey: "EMwIV6adoqxd-_1KXIZrDQ",
+// };
+
 function App() {
   const [collabDetails, setCollabDetails] = useState<CollabDetails | undefined>(
+    //fixedCollabDetails
     undefined
   );
 
